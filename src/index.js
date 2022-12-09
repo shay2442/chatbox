@@ -1,17 +1,47 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, { Component } from "react";
+import ReactDOM from "react-dom";
+import './App.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import ChatWindow from "./ChatWindow";
+import ChatComposer from "./ChatComposer";
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: [
+        { text: "First stored message" },
+        { text: "Second stored message" }
+      ]
+    };
+  }
+
+  // if new message was submitted from child component // process
+  submitted = getNewMessage => {
+    if (getNewMessage != "") {
+      // match the state format
+      const newMessage = { text: getNewMessage };
+      // merge new message in copy of state stored messages
+      let updatedMessages = [...this.state.messages, newMessage];
+      // update state
+      this.setState({
+        messages: updatedMessages
+      });
+    }
+  };
+
+  render() {
+    return (
+      <div className="App">
+        <h1>ReactJS Chat Box</h1>
+        {/* send stored messages as props to chat window */}
+        <ChatWindow messagesList={this.state.messages} />
+        {/* send submitted props to chat composer */}
+        <ChatComposer submitted={this.submitted} />
+      </div>
+    );
+  }
+}
+
+const rootElement = document.getElementById("root");
+ReactDOM.render(<App />, rootElement);
